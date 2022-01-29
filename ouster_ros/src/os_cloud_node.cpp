@@ -9,6 +9,7 @@
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <tf2_ros/static_transform_broadcaster.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 #include <algorithm>
 #include <chrono>
@@ -50,7 +51,7 @@ int main(int argc, char** argv) {
     auto pf = sensor::get_format(info);
 
     auto lidar_pub = nh.advertise<sensor_msgs::PointCloud2>("points", 10);
-    auto imu_pub = nh.advertise<sensor_msgs::Imu>("imu", 100);
+    auto imu_pub = nh.advertise<sensor_msgs::Imu>("imu/data_raw", 100);
 
     auto xyz_lut = ouster::make_xyz_lut(info);
 
@@ -67,8 +68,14 @@ int main(int argc, char** argv) {
                 });
             if (h != ls.headers.end()) {
                 scan_to_cloud(xyz_lut, h->timestamp, ls, cloud);
-                lidar_pub.publish(ouster_ros::cloud_to_cloud_msg(
-                    cloud, h->timestamp, sensor_frame));
+                sensor_msgs::PointCloud2 msg{};
+                pcl::toROSMsg(cloud, msg);
+                msg.header.frame_id = sensor_frame;
+                msg.header.stamp =  ros::Time::now();
+                lidar_pub.publish(msg); 
+                // lidar_pub.publish(ouster_ros::cloud_to_cloud_msg(
+                //     cloud, ros::Time::now(), sensor_frame));
+ //                   cloud, h->timestamp, sensor_frame));
             }
         }
     };
