@@ -70,7 +70,10 @@ int main(int argc, char** argv) {
                 scan_to_cloud(xyz_lut, h->timestamp, ls, cloud);
                 sensor_msgs::PointCloud2 msg{};
                 pcl::toROSMsg(cloud, msg);
-                msg.header.frame_id = sensor_frame;
+                // msg.header.frame_id = sensor_frame;
+                ////////////////////////////////
+                // NOTE(gogojjh):
+                msg.header.frame_id = "ouster00"; // same as the sensor_frame (os_sensor)
                 msg.header.stamp =  ros::Time::now();
                 lidar_pub.publish(msg); 
                 // lidar_pub.publish(ouster_ros::cloud_to_cloud_msg(
@@ -81,7 +84,10 @@ int main(int argc, char** argv) {
     };
 
     auto imu_handler = [&](const PacketMsg& p) {
-        imu_pub.publish(ouster_ros::packet_to_imu_msg(p, imu_frame, pf));
+        sensor_msgs::Imu msg = ouster_ros::packet_to_imu_msg(p, imu_frame, pf);
+        // NOTE(gogojjh):
+        msg.header.frame_id = "ouster00_imu";
+        imu_pub.publish(msg);
     };
 
     auto lidar_packet_sub = nh.subscribe<PacketMsg, const PacketMsg&>(

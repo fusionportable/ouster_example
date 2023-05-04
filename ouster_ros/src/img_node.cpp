@@ -44,7 +44,7 @@ sensor_msgs::ImagePtr make_image_msg(size_t H, size_t W,
     msg->encoding = sensor_msgs::image_encodings::MONO16;
     msg->data.resize(W * H * sizeof(pixel_type));
     msg->header.stamp = stamp;
-
+    msg->header.frame_id = "ouster00";
     return msg;
 }
 
@@ -67,13 +67,13 @@ int main(int argc, char** argv) {
     const auto& px_offset = info.format.pixel_shift_by_row;
 
     ros::Publisher range_image_pub =
-        nh.advertise<sensor_msgs::Image>("range_image", 100);
+        nh.advertise<sensor_msgs::Image>("range_image", 10);
     ros::Publisher nearir_image_pub =
-        nh.advertise<sensor_msgs::Image>("nearir_image", 100);
+        nh.advertise<sensor_msgs::Image>("nearir_image", 10);
     ros::Publisher signal_image_pub =
-        nh.advertise<sensor_msgs::Image>("signal_image", 100);
+        nh.advertise<sensor_msgs::Image>("signal_image", 10);
     ros::Publisher reflec_image_pub =
-        nh.advertise<sensor_msgs::Image>("reflec_image", 100);
+        nh.advertise<sensor_msgs::Image>("reflec_image", 10);
 
     ouster_ros::Cloud cloud{};
 
@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
     };
 
     auto pc_sub =
-        nh.subscribe<sensor_msgs::PointCloud2>("points", 100, cloud_handler);
+        nh.subscribe<sensor_msgs::PointCloud2>("points", 10, cloud_handler);
 
     ros::spin();
     return EXIT_SUCCESS;

@@ -30,17 +30,16 @@
     <param name="~/tf_prefix" value="$(arg tf_prefix)"/>
   </node>
 
-  <node if="$(arg viz)" pkg="rviz" name="rviz" type="rviz" args="$(arg rviz_config)" output="screen" required="true" />
-  <node if="$(arg viz)" pkg="ouster_ros" name="img_node" type="img_node" output="screen" required="true">
+  <node pkg="ouster_ros" name="img_node" type="img_node" output="screen" required="true">
     <remap from="~/os_config" to="/os_node/os_config"/>
     <remap from="~/points" to="/os_cloud_node/points"/>
-
     <remap from="~/range_image" to="/os_image_node/range_image"/>  
     <remap from="~/nearir_image" to="/os_image_node/nearir_image"/>
     <remap from="~/signal_image" to="/os_image_node/signal_image"/>
     <remap from="~/reflec_image" to="/os_image_node/reflec_image"/>
- 
   </node>
+
+  <node if="$(arg viz)" pkg="rviz" name="rviz" type="rviz" args="$(arg rviz_config)" output="screen" required="true" />
 
   <!-- for compatibility with < 1.13 rosbags -->
   <node pkg="topic_tools" name="relay_lidar" type="relay" args="/os1_node/lidar_packets /os_node/lidar_packets" />
