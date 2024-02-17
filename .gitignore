@@ -7,3 +7,5 @@ python/**/*.so
 python/**/*.dll
 
 ouster_ros/.vscode/
+
+.vscode/browse.vc.db
